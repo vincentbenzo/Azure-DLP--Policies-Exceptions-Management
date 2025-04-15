@@ -1,31 +1,24 @@
-# Azure DLP Exceptions Management
+# DLP Exceptions Management Deployment
 
-A production‑grade, Azure‑native system for managing DLP exceptions with a focus on modern DevSecOps practices. This solution leverages Azure SQL Database with system‑versioned temporal tables to store DLP exceptions, Azure Key Vault to secure sensitive secrets, and—eventually—Azure Functions to process change events and drive automated policy updates. The repository also includes a one‑click deployment button for streamlined provisioning in Azure.
+This repository deploys an Azure‑native DLP Exceptions Management system that includes an Azure Function App and Azure Key Vault for managing secrets. Click the button below to deploy the solution in your Azure subscription and resource group.
 
-Overview
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/<YourGitHubUser>/<YourRepo>/main/main.bicep)
 
-This project is designed to automate the management of DLP (Data Loss Prevention) exceptions with an architecture that:
+## Deployment Instructions
 
-    Stores DLP Exceptions: Utilizes an Azure SQL Database featuring system‑versioned temporal tables to record and track changes.
+1. **Click the button above.**  
+   This will open the Azure Portal's custom deployment screen.
+   
+2. **Select your Azure subscription** and **resource group** (or create a new one).
+   
+3. **Enter the required parameters** when prompted:
+   - **Function App Name:** Provide a unique name for your Azure Function App.
+   - **Key Vault Name:** Specify a globally unique name for your Azure Key Vault.
+   - **Location:** Defaults to the resource group location.
 
-    Secures Sensitive Data: Employs Azure Key Vault to securely store connection strings, certificates, and application secrets.
+4. **Review and Create.**  
+   Once you review the settings, click on *Create* to deploy the resources.
 
-    Automates Business Logic: Integrates with Azure Functions (planned) to react to data changes and automate DLP policy updates, certificate generation, and more.
+## Next Steps
 
-    DevSecOps Focus: Demonstrates production‑grade practices with Infrastructure as Code (via Bicep), a one‑click deployment process, and plans for CI/CD integration.
-
-Architecture
-
-The solution is composed of several key components:
-
-    Azure SQL Database with Temporal Tables:
-    Stores DLP exceptions in a table that automatically maintains history, enabling you to track changes over time.
-
-    Azure Key Vault:
-    Manages secrets and certificates securely. It serves as a centralized repository for sensitive configuration data.
-
-    Azure Functions (Planned):
-    Will react to data changes through one of several mechanisms (SQL Change Tracking, CDC, SQL Triggers with Service Bus) to implement business logic such as policy updates and certificate automation.
-
-    One‑Click Deployment:
-    Deploy the entire solution into your Azure subscription quickly using a single deployment button.
+In subsequent phases, we will add additional modules such as the Azure SQL Database with temporal tables, change detection triggers, and further configuration of the Function App.
