@@ -1,61 +1,31 @@
-// main.bicep
-targetScope = 'resourceGroup'
+@description('Name of the Function App')
+param functionAppName string
 
-@description('Location for all resources.')
+@description('Location for all resources')
 param location string = resourceGroup().location
 
-// SQL parameters
-@description('Globally unique SQL Server name.')
-param sqlServerName string
-
-@description('SQL Server admin username.')
-param sqlAdminUser string
-
-@description('SQL Server admin password.')
-param sqlAdminPassword securestring
-
-@description('SQL Database name.')
-param databaseName string = 'DLPExceptionsDB'
-
-// Key Vault parameter
-@description('Globally unique Key Vault name.')
+@description('Name of the Azure Key Vault')
 param keyVaultName string
 
-///////////////////////////////////////////////////////////////////////////////
-// Module: Deploy SQL Server and Database
-///////////////////////////////////////////////////////////////////////////////
-module sqlModule './modules/sql.bicep' = {
-  name: 'sqlDeployment'
+// (Optionally add additional parameters like SKU, settings, etc.)
+
+// Deploy the Function App module
+module functionApp 'modules/functionApp.bicep' = {
+  name: 'deployFunctionApp'
   params: {
+    functionAppName: functionAppName
     location: location
-    sqlServerName: sqlServerName
-    sqlAdminUser: sqlAdminUser
-    sqlAdminPassword: sqlAdminPassword
-    databaseName: databaseName
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Module: Deploy Key Vault
-///////////////////////////////////////////////////////////////////////////////
-module keyVaultModule './modules/keyVault.bicep' = {
-  name: 'keyVaultDeployment'
+// Deploy the Key Vault module
+module keyVault 'modules/keyVault.bicep' = {
+  name: 'deployKeyVault'
   params: {
-    location: location
     keyVaultName: keyVaultName
+    location: location
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Module: Deploy Temporal Table Script
-///////////////////////////////////////////////////////////////////////////////
-module temporalScriptModule './modules/deployTemporalTable.bicep' = {
-  name: 'temporalTableScriptDeployment'
-  params: {
-    location: location
-    sqlServerName: sqlServerName
-    sqlAdminUser: sqlAdminUser
-    sqlAdminPassword: sqlAdminPassword
-    databaseName: databaseName
-  }
-}
+output functionAppResourceId string = functionApp.outputs.functionAppResourceId
+output keyVaultResourceId string = keyVault.outputs.keyVaultResourceId
