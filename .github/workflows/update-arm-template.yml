@@ -1,0 +1,43 @@
+name: Update ARM Template
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.bicep'
+      - 'modules/**.bicep'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed to push changes
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Azure CLI
+        uses: azure/setup-azure-cli@v1
+      
+      - name: Install Bicep CLI
+        run: |
+          # Install Bicep
+          curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+          chmod +x ./bicep
+          sudo mv ./bicep /usr/local/bin/bicep
+          bicep --version
+      
+      - name: Build ARM template
+        run: |
+          bicep build main.bicep --outfile azuredeploy.json
+      
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add azuredeploy.json
+          # Only commit if there are changes
+          git diff --staged --quiet || git commit -m "Update azuredeploy.json from Bicep template"
+          git push
